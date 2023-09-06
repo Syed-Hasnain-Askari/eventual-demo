@@ -4148,7 +4148,7 @@ at-least-node@^1.0.0:
 
 aws-amplify@^5.3.10:
   version "5.3.10"
-  resolved "https://registry.npmjs.org/aws-amplify/-/aws-amplify-5.3.10.tgz"
+  resolved "https://registry.yarnpkg.com/aws-amplify/-/aws-amplify-5.3.10.tgz#1f6b8711ea03e7a7efd213295c6577f9b41c1d9a"
   integrity sha512-vwm97np/ni37WIWuE9xalj92vctgzIJRYX+FXcP9rAQgF4F2eEAjYNIkHGErpYqodmbeYF5gN1f/diKnhdGaRw==
   dependencies:
     "@aws-amplify/analytics" "6.5.4"
@@ -6342,7 +6342,7 @@ lightningcss-linux-x64-musl@1.19.0:
 
 lightningcss-win32-x64-msvc@1.19.0:
   version "1.19.0"
-  resolved "https://registry.yarnpkg.com/lightningcss-win32-x64-msvc/-/lightningcss-win32-x64-msvc-1.19.0.tgz#0854dbd153035eca1396e2227c708ad43655a61c"
+  resolved "https://registry.npmjs.org/lightningcss-win32-x64-msvc/-/lightningcss-win32-x64-msvc-1.19.0.tgz"
   integrity sha512-C+VuUTeSUOAaBZZOPT7Etn/agx/MatzJzGRkeV+zEABmPuntv1zihncsi+AyGmjkkzq3wVedEy7h0/4S84mUtg==
 
 lightningcss@~1.19.0:
