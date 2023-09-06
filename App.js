@@ -10,6 +10,8 @@ import ProfileScreen from './src/screens/ProfileScreen';
 import RecordScreen from './src/screens/RecordScreen';
 import ContactScreen from './src/screens/ContactScreen';
 
+import { PaperProvider } from 'react-native-paper';
+
 import { Amplify } from 'aws-amplify';
 import awsExports from './src/aws-exports';
 Amplify.configure(awsExports);
@@ -18,7 +20,8 @@ const Tab = createBottomTabNavigator();
 
 function App() {
   return (
-    <NavigationContainer>
+  <PaperProvider>
+      <NavigationContainer>
       <Tab.Navigator screenOptions={{
         headerShown:true,
       }}>
@@ -48,6 +51,7 @@ function App() {
         }} />
       </Tab.Navigator>
     </NavigationContainer>
+  </PaperProvider>
   );
 }
 

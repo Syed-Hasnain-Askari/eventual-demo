@@ -1,12 +1,17 @@
 // HomeScreen.js
 import React from 'react';
 import { View, Text } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { DataTable,TextInput } from 'react-native-paper';
 function HomeScreen() {
   return (
-    <SafeAreaView>
-      <Text>Home Screen</Text>
-    </SafeAreaView>
+    <View>
+            <TextInput
+      label="Password"
+      secureTextEntry
+      mode='outlined'
+      right={<TextInput.Icon icon="eye" />}
+    />
+    </View>
   );
 }
 export default HomeScreen;
