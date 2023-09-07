@@ -17,9 +17,7 @@ import { Amplify } from 'aws-amplify';
 import awsExports from './src/aws-exports';
 import { Pressable, StyleSheet, Text } from 'react-native';
 Amplify.configure(awsExports);
-
 const Tab = createBottomTabNavigator();
-
 function App() {
   const signOut = async () => {
     try {

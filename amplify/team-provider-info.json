@@ -1,19 +1,32 @@
 {
   "dev": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-eventualydemo-dev-180308-authRole",
-      "UnauthRoleArn": "arn:aws:iam::138288384683:role/amplify-eventualydemo-dev-180308-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::138288384683:role/amplify-eventualydemo-dev-180308-authRole",
-      "Region": "eu-north-1",
-      "DeploymentBucketName": "amplify-eventualydemo-dev-180308-deployment",
-      "UnauthRoleName": "amplify-eventualydemo-dev-180308-unauthRole",
-      "StackName": "amplify-eventualydemo-dev-180308",
-      "StackId": "arn:aws:cloudformation:eu-north-1:138288384683:stack/amplify-eventualydemo-dev-180308/023bff30-4c38-11ee-83ed-06af57f93666",
-      "AmplifyAppId": "d1c1jge2mrltym"
+      "AuthRoleName": "amplify-eventualdemo-dev-212301-authRole",
+      "UnauthRoleArn": "arn:aws:iam::138288384683:role/amplify-eventualdemo-dev-212301-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::138288384683:role/amplify-eventualdemo-dev-212301-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-eventualdemo-dev-212301-deployment",
+      "UnauthRoleName": "amplify-eventualdemo-dev-212301-unauthRole",
+      "StackName": "amplify-eventualdemo-dev-212301",
+      "StackId": "arn:aws:cloudformation:us-east-1:138288384683:stack/amplify-eventualdemo-dev-212301/18c4e010-4d1d-11ee-8080-0a1f08df5697",
+      "AmplifyAppId": "dezkh2lfc9a55",
+      "APIGatewayAuthURL": "https://s3.amazonaws.com/amplify-eventualdemo-dev-212301-deployment/amplify-cfn-templates/api/APIGatewayAuthStack.json"
     },
     "categories": {
       "auth": {
-        "eventualydemof50392c4": {}
+        "eventualdemof05052bf": {}
+      },
+      "function": {
+        "eventualdemo4a28bf97": {
+          "deploymentBucketName": "amplify-eventualdemo-dev-212301-deployment",
+          "s3Key": "amplify-builds/eventualdemo4a28bf97-7156504e2f7a73316549-build.zip"
+        }
+      },
+      "storage": {
+        "eventualdemo": {}
+      },
+      "api": {
+        "eventualdemo": {}
       }
     }
   }

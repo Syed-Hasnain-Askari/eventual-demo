@@ -1,6 +1,22 @@
 {
+  "api": {
+    "eventualdemo": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "eventualdemo4a28bf97"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "API Gateway"
+    }
+  },
   "auth": {
-    "eventualydemof50392c4": {
+    "eventualdemof05052bf": {
       "customAuth": false,
       "dependsOn": [],
       "frontendAuthConfig": {
@@ -25,6 +41,51 @@
       },
       "providerPlugin": "awscloudformation",
       "service": "Cognito"
+    }
+  },
+  "function": {
+    "eventualdemo4a28bf97": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributeEnvMap": {
+            "Arn": "TABLE_ARN",
+            "Name": "TABLE_NAME"
+          },
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "storage",
+          "resourceName": "eventualdemo"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_function_eventualdemo4a28bf97_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "eventualdemo4a28bf97"
+        }
+      ]
+    },
+    "AMPLIFY_function_eventualdemo4a28bf97_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "eventualdemo4a28bf97"
+        }
+      ]
+    }
+  },
+  "storage": {
+    "eventualdemo": {
+      "providerPlugin": "awscloudformation",
+      "service": "DynamoDB"
     }
   }
 }
