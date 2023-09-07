@@ -94,18 +94,50 @@ app.delete("/api/:id", function (request, response) {
       id: request.params.id
     }
   }
-  try {
-    dynamodb.delete(params).promise();
-    return {
-      statusCode: 204, // 204 indicates successful deletion
-      body: JSON.stringify({})
-    };
-  } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: error.message })
-    };
+  dynamodb.delete(params, (error, result) => {
+    if (error) {
+      response.json({ statusCode: 500, error: error.message, url: request.url });
+    } else {
+      response.json({ statusCode: 200, url: request.url, body: JSON.stringify(result) })
+    }
+  });
+});
+
+/************************************
+ * HTTP put method to update Record *
+ ************************************/
+
+app.patch("/api", function (request, response) {
+  const timestamp = new Date().toISOString();
+  const params = {
+    TableName: tableName,
+    Key: {
+      id: request.body.id,
+    },
+    ExpressionAttributeNames: { '#text': 'text' },
+    ExpressionAttributeValues: {},
+    ReturnValues: 'UPDATED_NEW',
+  };
+  params.UpdateExpression = 'SET ';
+  if (request.body.text) {
+    params.ExpressionAttributeValues[':text'] = request.body.text;
+    params.UpdateExpression += '#text = :text, ';
   }
+  if (request.body.complete) {
+    params.ExpressionAttributeValues[':complete'] = request.body.complete;
+    params.UpdateExpression += 'complete = :complete, ';
+  }
+  if (request.body.text || request.body.complete) {
+    params.ExpressionAttributeValues[':updatedAt'] = timestamp;
+    params.UpdateExpression += 'updatedAt = :updatedAt';
+  }
+  dynamodb.update(params, (error, result) => {
+    if (error) {
+      response.json({ statusCode: 500, error: error.message, url: request.url });
+    } else {
+      response.json({ statusCode: 200, url: request.url, body: JSON.stringify(result.Attributes) })
+    }
+  });
 });
 
 /*****************************************
@@ -151,98 +183,3 @@ app.get(path + '/object' + hashKeyPath + sortKeyPath, async function(req, res) {
     res.json({error: 'Could not load items: ' + err.message});
   }
 });
-
-
-/************************************
-* HTTP put method for insert object *
-*************************************/
-
-app.put(path, async function(req, res) {
-
-  if (userIdPresent) {
-    req.body['userId'] = req.apiGateway.event.requestContext.identity.cognitoIdentityId || UNAUTH;
-  }
-
-  let putItemParams = {
-    TableName: tableName,
-    Item: req.body
-  }
-  try {
-    let data = await ddbDocClient.send(new PutCommand(putItemParams));
-    res.json({ success: 'put call succeed!', url: req.url, data: data })
-  } catch (err) {
-    res.statusCode = 500;
-    res.json({ error: err, url: req.url, body: req.body });
-  }
-});
-
-/************************************
-* HTTP post method for insert object *
-*************************************/
-
-app.post(path, async function(req, res) {
-
-  if (userIdPresent) {
-    req.body['userId'] = req.apiGateway.event.requestContext.identity.cognitoIdentityId || UNAUTH;
-  }
-
-  let putItemParams = {
-    TableName: tableName,
-    Item: req.body
-  }
-  try {
-    let data = await ddbDocClient.send(new PutCommand(putItemParams));
-    res.json({ success: 'post call succeed!', url: req.url, data: data })
-  } catch (err) {
-    res.statusCode = 500;
-    res.json({ error: err, url: req.url, body: req.body });
-  }
-});
-
-/**************************************
-* HTTP remove method to delete object *
-***************************************/
-app.delete(path + '/api' + hashKeyPath + sortKeyPath, async function(req, res) {
-  const params = {};
-  if (userIdPresent && req.apiGateway) {
-    params[partitionKeyName] = req.apiGateway.event.requestContext.identity.cognitoIdentityId || UNAUTH;
-  } else {
-    params[partitionKeyName] = req.params[partitionKeyName];
-     try {
-      params[partitionKeyName] = convertUrlType(req.params[partitionKeyName], partitionKeyType);
-    } catch(err) {
-      res.statusCode = 500;
-      res.json({error: 'Wrong column type ' + err});
-    }
-  }
-  if (hasSortKey) {
-    try {
-      params[sortKeyName] = convertUrlType(req.params[sortKeyName], sortKeyType);
-    } catch(err) {
-      res.statusCode = 500;
-      res.json({error: 'Wrong column type ' + err});
-    }
-  }
-
-  let removeItemParams = {
-    TableName: tableName,
-    Key: params
-  }
-
-  try {
-    let data = await ddbDocClient.send(new DeleteCommand(removeItemParams));
-    res.json({url: req.url, data: data});
-  } catch (err) {
-    res.statusCode = 500;
-    res.json({error: err, url: req.url});
-  }
-});
-
-app.listen(3000, function() {
-  console.log("App started")
-});
-
-// Export the app object. When executing the application local this does nothing. However,
-// to port it to AWS Lambda we will create a wrapper around that will load the app from
-// this file
-module.exports = app

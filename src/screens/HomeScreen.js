@@ -2,10 +2,13 @@ import { Auth } from 'aws-amplify';
 import React, { useEffect, useState } from 'react';
 import { API } from 'aws-amplify'
 import { View,StyleSheet,ScrollView, Alert } from 'react-native';
-import {Text, Portal,Button,Modal,TextInput,IconButton, ActivityIndicator,MD3Colors} from 'react-native-paper';
+import {Text,Button,IconButton, ActivityIndicator,MD3Colors} from 'react-native-paper';
 import UserModal from './components/Modal';
+import UpdateModal from './components/UpdateModal';
+import {generateAiLikeUuid} from '../util/helper'
 function HomeScreen() {
   const [visible, setVisible] = React.useState(false);
+  const [visibleUpdate, setVisibleUpdate] = React.useState(false);
   const [item,setItems] = useState('')
   const [field,setFields] = useState({
     name:'',
@@ -20,7 +23,22 @@ function HomeScreen() {
   }
 
   const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
+  const hideModal = () => {
+    setVisible(false)
+    refreshField()
+  };
+
+  const showUpdateModal = () => setVisibleUpdate(true);
+  const hideUpdateModal = () => {
+    setVisibleUpdate(false)
+    refreshField()
+  };
+  const refreshField = () => {
+    setFields({
+      name:'',
+      account:''
+    })
+  }
   const signOut = async () => {
     try {
       await Auth.signOut({ global: true });
@@ -37,8 +55,10 @@ function HomeScreen() {
         { text: 'Yes', onPress: () => {
           API.del('eventualdemo', `/api/${itemToDelete?.id}`, {})
             .then(result => {
-              getUserRecords();
-              Alert.alert("Alert", "Delete successfully");
+              if(result){
+                getUserRecords();
+                Alert.alert("Alert", "Delete successfully");
+              }
             })
             .catch(err => {
               console.log(err);
@@ -50,6 +70,26 @@ function HomeScreen() {
     );
   };
   
+  const handleSubmitUpdate = () => {
+    const date = getCurrentDate()
+    const generatedUuid = generateAiLikeUuid();
+    API.patch('eventualdemo', '/api', {
+      body: {
+        id:generatedUuid,
+        name: field.name,
+        account:field.account,
+        Date:date,
+        complete:true
+      }
+    }).then(result => {
+      getUserRecords();
+      hideUpdateModal();
+      Alert.alert("Alert", "Record has been updated");
+      console.log(result);
+    }).catch(err => {
+      console.log(err);
+    });
+  };
   const getUserRecords = () => {
     API.get('eventualdemo','/api', {}).then(result => {
       setItems(result)
@@ -76,10 +116,14 @@ function HomeScreen() {
   }
   
   const handleSubmit = () => {
+    const date = getCurrentDate()
+    const generatedUuid = generateAiLikeUuid();
     API.post('eventualdemo', '/api', {
       body: {
-        id: "2",
-        name: field.name
+        id:generatedUuid,
+        name: field.name,
+        account:field.account,
+        Date:date
       }
     }).then(result => {
       getUserRecords();
@@ -94,6 +138,16 @@ function HomeScreen() {
   console.log(field.account,"account")
   console.log(item,"Items")
   console.log(Date.UTC().toString())
+
+  const handleEdit = (val) =>{
+    console.log(val,"val=====>")
+    setFields({
+      id:val.id,
+      name:val.name,
+      account:val.account
+    })
+    showUpdateModal()
+  }
   return (
     <View>
         <View style={styles.DataTable}>
@@ -123,7 +177,7 @@ function HomeScreen() {
           <View style={styles.DataTableHeader} key={index}>
             <Text style={styles.DataTableTitle}>{val.name}</Text>
             <Text style={[styles.DataTableTitle, styles.numeric]}>{val.account}</Text>
-            <Text style={[styles.DataTableTitle]}>{val.date}</Text>
+            <Text style={[styles.DataTableTitle]}>{val.Date}</Text>
             <Text style={[styles.DataTableTitle]}>
             <View style={{ display:'flex',flexDirection: 'row',justifyContent:'space-between'}}>
             <IconButton
@@ -131,7 +185,7 @@ function HomeScreen() {
         icon="circle-edit-outline"
         iconColor={MD3Colors.primary50}
         size={30}
-        onPress={() => console.log('Pressed')}
+        onPress={() => handleEdit(val)}
       />
               <IconButton
               style={{ marginLeft:-10 }}
@@ -158,12 +212,21 @@ function HomeScreen() {
         </Button>
         <UserModal
         showModal={showModal}
-        hideModal={showModal}
+        hideModal={hideModal}
         visible={visible}
         handleOnChnage={handleOnChnage}
         field={field}
         setFields={setFields}
         handleSubmit={handleSubmit}
+        />
+        <UpdateModal
+          showUpdateModal={showUpdateModal}
+          hideUpdateModal={hideUpdateModal}
+          visibleUpdate={visibleUpdate}
+          handleOnChnage={handleOnChnage}
+          field={field}
+          setFields={setFields}
+         handleSubmitUpdate={handleSubmitUpdate}
         />
     </View>
   );
