@@ -3,7 +3,7 @@ import { Modal,Portal,Text,TextInput,Button,IconButton } from 'react-native-pape
 import React from 'react'
 export default function UpdateModal({handleOnChnage,handleSubmitUpdate,hideUpdateModal,visibleUpdate,field}) {
   const containerStyle = {backgroundColor: 'white',height:400,margin:20,padding:20, borderRadius:20};
-  console.log(field,"field")
+  console.log(field,"fieldsdasds")
   return (
     <View>
       <Portal>
@@ -34,7 +34,7 @@ export default function UpdateModal({handleOnChnage,handleSubmitUpdate,hideUpdat
     />
           </View>
           <View style={{marginTop:20}}>
-              <Button mode="contained" onPress={handleSubmitUpdate} style={{padding:5}}>
+              <Button mode="contained" onPress={()=>{handleSubmitUpdate(field)}} style={{padding:5}}>
                 UPDATE
              </Button>
           </View>

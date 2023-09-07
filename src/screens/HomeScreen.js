@@ -1,12 +1,14 @@
 import { Auth } from 'aws-amplify';
 import React, { useEffect, useState } from 'react';
 import { API } from 'aws-amplify'
+import * as AWS from 'aws-sdk';
 import { View,StyleSheet,ScrollView, Alert } from 'react-native';
 import {Text,Button,IconButton, ActivityIndicator,MD3Colors} from 'react-native-paper';
 import UserModal from './components/Modal';
 import UpdateModal from './components/UpdateModal';
 import {generateAiLikeUuid} from '../util/helper'
 function HomeScreen() {
+  const docClient = new AWS.DynamoDB.DocumentClient();
   const [visible, setVisible] = React.useState(false);
   const [visibleUpdate, setVisibleUpdate] = React.useState(false);
   const [item,setItems] = useState('')
@@ -53,7 +55,7 @@ function HomeScreen() {
       'Are you sure you want to delete?',
       [
         { text: 'Yes', onPress: () => {
-          API.del('eventualdemo', `/api/${itemToDelete?.id}`, {})
+          API.del('eventualdemo',`/api?id=${itemToDelete?.id}/`, {})
             .then(result => {
               if(result){
                 getUserRecords();
@@ -69,17 +71,15 @@ function HomeScreen() {
       { cancelable: false }
     );
   };
-  
-  const handleSubmitUpdate = () => {
+  const handleSubmitUpdate = (field) => {
     const date = getCurrentDate()
-    const generatedUuid = generateAiLikeUuid();
-    API.patch('eventualdemo', '/api', {
+    // const generatedUuid = generateAiLikeUuid();
+    API.put('eventualdemo',`/api?id=${field.id}/`, {
       body: {
-        id:generatedUuid,
+        id:field?.id,
         name: field.name,
         account:field.account,
         Date:date,
-        complete:true
       }
     }).then(result => {
       getUserRecords();
@@ -171,7 +171,7 @@ function HomeScreen() {
   )
   :
   (
-    <ScrollView>
+    <ScrollView style={{height:440}}>
       {
         item.map((val,index) => (
           <View style={styles.DataTableHeader} key={index}>
@@ -206,7 +206,9 @@ function HomeScreen() {
 </View>
 
     </View>
-      <Button style={styles.create} icon="plus" mode="outlined" onPress={showModal}></Button>
+      <Button style={styles.insert} onPress={showModal}>
+        <Text style={styles.buttonText}>Create</Text>
+        </Button>
       <Button style={styles.button} onPress={() => signOut()}>
         <Text style={styles.buttonText}>Sign out</Text>
         </Button>
@@ -254,16 +256,6 @@ const styles = StyleSheet.create({
     padding: 8,
     marginLeft:20
   },
-  create:{
-    position:"absolute",
-    left:280,
-    top:480,
-    borderRadius:"100%",
-    height:60,
-    width:110,
-    paddingTop:12
-    
-  },
   button: {
     position:"absolute",
     left:50,
@@ -271,7 +263,18 @@ const styles = StyleSheet.create({
     top:550,
     backgroundColor: '#B00020',
     padding: 10,
-    borderRadius: "100%",
+    borderRadius: 100,
+    height:60,
+    width:300
+  },
+  insert: {
+    position:"absolute",
+    left:50,
+    right:0,
+    top:480,
+    backgroundColor: '#B00020',
+    padding: 10,
+    borderRadius: 100,
     height:60,
     width:300
   },

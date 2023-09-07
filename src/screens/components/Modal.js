@@ -28,10 +28,6 @@ export default function UserModal({handleSubmit,handleOnChnage,handleSubmitUpdat
       value={field.account}
       onChangeText={(e)=>{handleOnChnage('account',e)}}
     />
-      <Text variant="labelLarge">Date</Text>
-      <TextInput
-      label="Date"
-    />
           </View>
           <View style={{marginTop:20}}>
               <Button mode="contained" onPress={handleSubmit} style={{padding:5}}>

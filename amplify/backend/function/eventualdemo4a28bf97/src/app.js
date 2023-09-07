@@ -1,11 +1,21 @@
 const AWS = require('aws-sdk')
-const userId = require('./utils/helper')
+const { DynamoDBClient, UpdateItemCommand } = require("@aws-sdk/client-dynamodb");
+const {
+  DynamoDBDocumentClient,
+  ScanCommand,
+  PutCommand,
+  GetCommand,
+  DeleteCommand,
+} = require=("@aws-sdk/lib-dynamodb");
 var awsServerlessExpressMiddleware = require('aws-serverless-express/middleware')
 var bodyParser = require('body-parser')
 var express = require('express')
 const { v4: uuidv4 } = require('uuid')
 AWS.config.update({ region: process.env.TABLE_REGION });
 const dynamodb = new AWS.DynamoDB.DocumentClient();
+// Create a DynamoDB client
+const client = new DynamoDBClient({});
+const dynamo = DynamoDBDocumentClient.from(client);
 let tableName = "eventualdemo";
 if (process.env.ENV && process.env.ENV !== "NONE") {
   tableName = tableName + '-' + process.env.ENV;
@@ -87,99 +97,70 @@ app.post("/api", function (request, response) {
  * HTTP Delete method to delete Record *
  ************************************/
 
-app.delete("/api/:id", function (request, response) {
-  let params = {
-    TableName: tableName,
-    Key: {
-      id: request.params.id
-    }
-  }
-  dynamodb.delete(params, (error, result) => {
-    if (error) {
-      response.json({ statusCode: 500, error: error.message, url: request.url });
-    } else {
-      response.json({ statusCode: 200, url: request.url, body: JSON.stringify(result) })
-    }
-  });
+app.delete(`/api/:${request.params.id}`, async function (request, response) {
+  await dynamo.send(
+    new DeleteCommand({
+      TableName: tableName,
+      Key: {
+        id:request.params.id,
+      },
+    })
+  );
 });
 
 /************************************
  * HTTP put method to update Record *
  ************************************/
-
-app.patch("/api", function (request, response) {
-  const timestamp = new Date().toISOString();
-  const params = {
-    TableName: tableName,
-    Key: {
-      id: request.body.id,
-    },
-    ExpressionAttributeNames: { '#text': 'text' },
-    ExpressionAttributeValues: {},
-    ReturnValues: 'UPDATED_NEW',
-  };
-  params.UpdateExpression = 'SET ';
-  if (request.body.text) {
-    params.ExpressionAttributeValues[':text'] = request.body.text;
-    params.UpdateExpression += '#text = :text, ';
-  }
-  if (request.body.complete) {
-    params.ExpressionAttributeValues[':complete'] = request.body.complete;
-    params.UpdateExpression += 'complete = :complete, ';
-  }
-  if (request.body.text || request.body.complete) {
-    params.ExpressionAttributeValues[':updatedAt'] = timestamp;
-    params.UpdateExpression += 'updatedAt = :updatedAt';
-  }
-  dynamodb.update(params, (error, result) => {
-    if (error) {
-      response.json({ statusCode: 500, error: error.message, url: request.url });
-    } else {
-      response.json({ statusCode: 200, url: request.url, body: JSON.stringify(result.Attributes) })
-    }
-  });
-});
-
-/*****************************************
- * HTTP Get method for get single object *
- *****************************************/
-
-app.get(path + '/object' + hashKeyPath + sortKeyPath, async function(req, res) {
-  const params = {};
-  if (userIdPresent && req.apiGateway) {
-    params[partitionKeyName] = req.apiGateway.event.requestContext.identity.cognitoIdentityId || UNAUTH;
-  } else {
-    params[partitionKeyName] = req.params[partitionKeyName];
-    try {
-      params[partitionKeyName] = convertUrlType(req.params[partitionKeyName], partitionKeyType);
-    } catch(err) {
-      res.statusCode = 500;
-      res.json({error: 'Wrong column type ' + err});
-    }
-  }
-  if (hasSortKey) {
-    try {
-      params[sortKeyName] = convertUrlType(req.params[sortKeyName], sortKeyType);
-    } catch(err) {
-      res.statusCode = 500;
-      res.json({error: 'Wrong column type ' + err});
-    }
-  }
-
-  let getItemParams = {
-    TableName: tableName,
-    Key: params
-  }
-
+app.put('/api/:id', async (req, res) => {
+  const { id } = req.params;
+  console.log(id,"id---->")
+  const updatedItem = req.body;
   try {
-    const data = await ddbDocClient.send(new GetCommand(getItemParams));
-    if (data.Item) {
-      res.json(data.Item);
-    } else {
-      res.json(data) ;
+    // Construct the update expression
+    const updateExpression = [];
+    const expressionAttributeValues = {};
+
+    if (updatedItem.name !== undefined) {
+      updateExpression.push("SET #name = :name");
+      expressionAttributeValues[":name"] = updatedItem.name;
     }
-  } catch (err) {
-    res.statusCode = 500;
-    res.json({error: 'Could not load items: ' + err.message});
+
+    if (updatedItem.account !== undefined) {
+      updateExpression.push("SET #account = :account");
+      expressionAttributeValues[":account"] = updatedItem.account;
+    }
+
+    // Add more attributes as needed
+
+    updateExpression.push("SET #updatedAt = :updatedAt");
+    expressionAttributeValues[":updatedAt"] = new Date().toISOString();
+
+    // Define the update command
+    const updateCommand = new UpdateItemCommand({
+      TableName: "userDetails", // Replace with your table name
+      Key: { id: { S: id } }, // Assuming 'id' is a string, adjust the type as needed
+      UpdateExpression: updateExpression.join(", "),
+      ExpressionAttributeNames: {
+        "#name": "name",
+        "#account": "account",
+        "#updatedAt": "updatedAt",
+        // Add more attribute names here
+      },
+      ExpressionAttributeValues: expressionAttributeValues,
+      ReturnValues: "ALL_NEW",
+    });
+
+    // Execute the update command
+    const response = await client.send(updateCommand);
+    const updatedAttributes = response.Attributes;
+
+    // Handle the updatedAttributes here if needed
+
+    console.log(`Item updated: ${JSON.stringify(updatedAttributes)}`);
+
+    // You can perform additional actions here after the update
+
+  } catch (error) {
+    console.error(`Unable to update item with id ${id}: ${error}`);
   }
-});
+})
