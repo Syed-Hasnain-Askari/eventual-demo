@@ -48,14 +48,25 @@ function HomeScreen() {
     })
   }
   const signOut = async () => {
-    try {
-      await Auth.signOut({ global: true });
-    } catch (error) {
-      console.log('error signing out: ', error);
-    }
+    
+      Alert.alert(
+        'Alert',
+        'Are you sure you want to logout?',
+        [
+          { text: 'Yes', onPress: async () => {
+            try{
+              await Auth.signOut({ global: true });
+            }
+            catch(e){
+              Alert.alert('Alert','Something went wrong')
+            }
+          } },
+          { text: 'No', onPress: () => console.log('No') },
+        ],
+        { cancelable: false }
+      );
   };
   const handleDelete = (itemToDelete) => {
-    console.log(itemToDelete?.id, "----->>>");
     Alert.alert(
       'Alert',
       'Are you sure you want to delete?',
@@ -71,7 +82,7 @@ function HomeScreen() {
           // Perform the delete operation
           dynamodb.delete(params, (err, data) => {
             if (err) {
-              console.error('Error deleting item:', err);
+              Alert.alert('Alert','Something went wrong')
             } else {
               Alert.alert('Alert','Item deleted successfully')
               getUserRecords();
@@ -119,10 +130,16 @@ function HomeScreen() {
     });
   };
   const getUserRecords = () => {
+    setLoading(true)
     API.get('eventaulfinal','/api', {}).then(result => {
-      setItems(result)
+      if(result)
+      {
+        setItems(result)
+        setLoading(false)
+      }
      }).catch(err => {
-      console.log(err,"Error====>>>>");
+      Alert.alert('Alert',"Something went wrong")
+      setLoading(false)
      })
   }
   useEffect(()=>{
@@ -189,7 +206,7 @@ function HomeScreen() {
       <View>
   {!item ? (
     <View style={{position:'absolute',justifyContent:"center",alignItems:'center',left:0,right:0,bottom:0,top:250}}>
-      <ActivityIndicator size={'small'} animating={'true'}/>
+      <ActivityIndicator size={'small'} animating={loading}/>
     </View>
   ) :
   item.length === 0 ? (

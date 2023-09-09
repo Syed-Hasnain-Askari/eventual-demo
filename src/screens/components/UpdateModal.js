@@ -31,7 +31,7 @@ export default function UpdateModal({handleOnChnage,handleSubmitUpdate,hideUpdat
     
           </View>
           <View style={{marginTop:20}}>
-              <Button mode="contained" onPress={()=>{handleSubmitUpdate(field)}} style={{padding:5}}>
+              <Button mode="contained" onPress={()=>{handleSubmitUpdate(field)}} style={{padding:5,backgroundColor:"#B00020",color:"#fff"}}>
                 UPDATE
              </Button>
           </View>

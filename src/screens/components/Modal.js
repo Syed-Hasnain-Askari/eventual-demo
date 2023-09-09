@@ -30,7 +30,7 @@ export default function UserModal({handleSubmit,handleOnChnage,handleSubmitUpdat
     />
           </View>
           <View style={{marginTop:20}}>
-              <Button mode="contained" onPress={handleSubmit} style={{padding:5}}>
+              <Button mode="contained" onPress={handleSubmit} style={{padding:5,backgroundColor:"#B00020",color:"#fff"}}>
                 SUBMIT
              </Button>
           </View>
