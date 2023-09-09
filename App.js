@@ -19,13 +19,6 @@ import { Pressable, StyleSheet, Text } from 'react-native';
 Amplify.configure(awsExports);
 const Tab = createBottomTabNavigator();
 function App() {
-  const signOut = async () => {
-    try {
-      await Auth.signOut({ global: true });
-    } catch (error) {
-      console.log('error signing out: ', error);
-    }
-  };
   return (
   <PaperProvider>
       <NavigationContainer>

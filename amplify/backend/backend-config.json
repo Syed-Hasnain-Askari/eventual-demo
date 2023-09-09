@@ -1,6 +1,6 @@
 {
   "api": {
-    "eventualdemo": {
+    "eventaulfinal": {
       "dependsOn": [
         {
           "attributes": [
@@ -8,7 +8,15 @@
             "Arn"
           ],
           "category": "function",
-          "resourceName": "eventualdemo4a28bf97"
+          "resourceName": "eventualfinal42e2ba1f"
+        },
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "user"
         }
       ],
       "providerPlugin": "awscloudformation",
@@ -16,7 +24,7 @@
     }
   },
   "auth": {
-    "eventualdemof05052bf": {
+    "eventualfinal3724f223": {
       "customAuth": false,
       "dependsOn": [],
       "frontendAuthConfig": {
@@ -44,7 +52,7 @@
     }
   },
   "function": {
-    "eventualdemo4a28bf97": {
+    "eventualfinal42e2ba1f": {
       "build": true,
       "dependsOn": [
         {
@@ -57,7 +65,28 @@
             "Arn"
           ],
           "category": "storage",
-          "resourceName": "eventualdemo"
+          "resourceName": "users"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "user": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "usersTriggerf80dccdc": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name",
+            "Arn",
+            "StreamArn"
+          ],
+          "category": "storage",
+          "resourceName": "users"
         }
       ],
       "providerPlugin": "awscloudformation",
@@ -65,25 +94,57 @@
     }
   },
   "parameters": {
-    "AMPLIFY_function_eventualdemo4a28bf97_deploymentBucketName": {
+    "AMPLIFY_function_eventualfinal42e2ba1f_deploymentBucketName": {
       "usedBy": [
         {
           "category": "function",
-          "resourceName": "eventualdemo4a28bf97"
+          "resourceName": "eventualfinal42e2ba1f"
         }
       ]
     },
-    "AMPLIFY_function_eventualdemo4a28bf97_s3Key": {
+    "AMPLIFY_function_eventualfinal42e2ba1f_s3Key": {
       "usedBy": [
         {
           "category": "function",
-          "resourceName": "eventualdemo4a28bf97"
+          "resourceName": "eventualfinal42e2ba1f"
+        }
+      ]
+    },
+    "AMPLIFY_function_user_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "user"
+        }
+      ]
+    },
+    "AMPLIFY_function_user_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "user"
+        }
+      ]
+    },
+    "AMPLIFY_function_usersTriggerf80dccdc_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "usersTriggerf80dccdc"
+        }
+      ]
+    },
+    "AMPLIFY_function_usersTriggerf80dccdc_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "usersTriggerf80dccdc"
         }
       ]
     }
   },
   "storage": {
-    "eventualdemo": {
+    "users": {
       "providerPlugin": "awscloudformation",
       "service": "DynamoDB"
     }

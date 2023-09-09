@@ -1,7 +1,13 @@
 import { Auth } from 'aws-amplify';
+import { SECRET_KEY, ACCESS_KEY } from '@env';
 import React, { useEffect, useState } from 'react';
 import { API } from 'aws-amplify'
 import * as AWS from 'aws-sdk';
+
+AWS.config.update({ region: 'us-west-1',secretAccessKey:SECRET_KEY,
+accessKeyId: ACCESS_KEY });
+// Create an instance of the DynamoDB Document Client
+const dynamodb = new AWS.DynamoDB.DocumentClient();
 import { View,StyleSheet,ScrollView, Alert } from 'react-native';
 import {Text,Button,IconButton, ActivityIndicator,MD3Colors} from 'react-native-paper';
 import UserModal from './components/Modal';
@@ -54,44 +60,66 @@ function HomeScreen() {
       'Alert',
       'Are you sure you want to delete?',
       [
-        { text: 'Yes', onPress: () => {
-          API.del('eventualdemo',`/api?id=${itemToDelete?.id}/`, {})
-            .then(result => {
-              if(result){
-                getUserRecords();
-                Alert.alert("Alert", "Delete successfully");
-              }
-            })
-            .catch(err => {
-              console.log(err);
-            });
+        { text: 'Yes', onPress: async () => {
+          const params = {
+            TableName: 'users-dev',
+            Key: {
+              'id': itemToDelete?.id
+            },
+          };
+          
+          // Perform the delete operation
+          dynamodb.delete(params, (err, data) => {
+            if (err) {
+              console.error('Error deleting item:', err);
+            } else {
+              Alert.alert('Alert','Item deleted successfully')
+              getUserRecords();
+            }
+          });
         } },
         { text: 'No', onPress: () => console.log('No') },
       ],
       { cancelable: false }
     );
   };
-  const handleSubmitUpdate = (field) => {
+  const [loading,setLoading] = useState(false)
+  const handleSubmitUpdate = async (field) => {
     const date = getCurrentDate()
-    // const generatedUuid = generateAiLikeUuid();
-    API.put('eventualdemo',`/api?id=${field.id}/`, {
-      body: {
-        id:field?.id,
-        name: field.name,
-        account:field.account,
-        Date:date,
+    const params = {
+      TableName: 'users-dev',
+      Key: {
+        // Specify the primary key attributes and their values to identify the item to update
+        // For example:
+        'id': field?.id
+      },
+      UpdateExpression: 'SET #nameAttr = :newName, #accountAttr = :newAccount, #dateAttr = :newDate',
+      ExpressionAttributeNames: {
+        '#nameAttr': 'name',
+        '#accountAttr': 'account',
+        '#dateAttr': 'date',
+      },
+      ExpressionAttributeValues: {
+        ':newName': field?.name, // Specify the new value for the 'name' attribute
+        ':newAccount':field?.account, // Specify the new value for the 'account' attribute
+        ':newDate': date, // Specify the new value for the 'date' attribute
+      },
+      ReturnValues: 'ALL_NEW', // Optionally, specify what values to return after the update
+    };
+    // Perform the update operation
+    dynamodb.update(params, (err, data) => {
+      if (err) {
+        Alert.alert('Alert',"Something went wrong")
+      } else {
+        hideUpdateModal()
+        refreshField();
+        getUserRecords()
+        Alert.alert('Alert',"Record updated successfully")
       }
-    }).then(result => {
-      getUserRecords();
-      hideUpdateModal();
-      Alert.alert("Alert", "Record has been updated");
-      console.log(result);
-    }).catch(err => {
-      console.log(err);
     });
   };
   const getUserRecords = () => {
-    API.get('eventualdemo','/api', {}).then(result => {
+    API.get('eventaulfinal','/api', {}).then(result => {
       setItems(result)
      }).catch(err => {
       console.log(err,"Error====>>>>");
@@ -118,7 +146,7 @@ function HomeScreen() {
   const handleSubmit = () => {
     const date = getCurrentDate()
     const generatedUuid = generateAiLikeUuid();
-    API.post('eventualdemo', '/api', {
+    API.post('eventaulfinal', '/api', {
       body: {
         id:generatedUuid,
         name: field.name,
@@ -179,7 +207,7 @@ function HomeScreen() {
             <Text style={[styles.DataTableTitle, styles.numeric]}>{val.account}</Text>
             <Text style={[styles.DataTableTitle]}>{val.Date}</Text>
             <Text style={[styles.DataTableTitle]}>
-            <View style={{ display:'flex',flexDirection: 'row',justifyContent:'space-between'}}>
+            <View style={{display:'flex',flexDirection: 'row',justifyContent:'space-center',margin:10}}>
             <IconButton
     
         icon="circle-edit-outline"

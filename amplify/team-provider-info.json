@@ -1,32 +1,39 @@
 {
   "dev": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-eventualdemo-dev-212301-authRole",
-      "UnauthRoleArn": "arn:aws:iam::138288384683:role/amplify-eventualdemo-dev-212301-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::138288384683:role/amplify-eventualdemo-dev-212301-authRole",
-      "Region": "us-east-1",
-      "DeploymentBucketName": "amplify-eventualdemo-dev-212301-deployment",
-      "UnauthRoleName": "amplify-eventualdemo-dev-212301-unauthRole",
-      "StackName": "amplify-eventualdemo-dev-212301",
-      "StackId": "arn:aws:cloudformation:us-east-1:138288384683:stack/amplify-eventualdemo-dev-212301/18c4e010-4d1d-11ee-8080-0a1f08df5697",
-      "AmplifyAppId": "dezkh2lfc9a55",
-      "APIGatewayAuthURL": "https://s3.amazonaws.com/amplify-eventualdemo-dev-212301-deployment/amplify-cfn-templates/api/APIGatewayAuthStack.json"
+      "AuthRoleName": "amplify-eventualfinal-dev-173923-authRole",
+      "UnauthRoleArn": "arn:aws:iam::138288384683:role/amplify-eventualfinal-dev-173923-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::138288384683:role/amplify-eventualfinal-dev-173923-authRole",
+      "Region": "us-west-1",
+      "DeploymentBucketName": "amplify-eventualfinal-dev-173923-deployment",
+      "UnauthRoleName": "amplify-eventualfinal-dev-173923-unauthRole",
+      "StackName": "amplify-eventualfinal-dev-173923",
+      "StackId": "arn:aws:cloudformation:us-west-1:138288384683:stack/amplify-eventualfinal-dev-173923/304d3f10-4e90-11ee-aa51-023d530f314b",
+      "AmplifyAppId": "d3ru4qb21q4z5y"
     },
     "categories": {
-      "auth": {
-        "eventualdemof05052bf": {}
-      },
       "function": {
-        "eventualdemo4a28bf97": {
-          "deploymentBucketName": "amplify-eventualdemo-dev-212301-deployment",
-          "s3Key": "amplify-builds/eventualdemo4a28bf97-7156504e2f7a73316549-build.zip"
+        "eventualfinal42e2ba1f": {
+          "deploymentBucketName": "amplify-eventualfinal-dev-173923-deployment",
+          "s3Key": "amplify-builds/eventualfinal42e2ba1f-48656335344833727075-build.zip"
+        },
+        "user": {
+          "deploymentBucketName": "amplify-eventualfinal-dev-173923-deployment",
+          "s3Key": "amplify-builds/user-5834715a42592b7a5537-build.zip"
+        },
+        "usersTriggerf80dccdc": {
+          "deploymentBucketName": "amplify-eventualfinal-dev-173923-deployment",
+          "s3Key": "amplify-builds/usersTriggerf80dccdc-564a707a53684b4f484b-build.zip"
         }
       },
       "storage": {
-        "eventualdemo": {}
+        "users": {}
       },
       "api": {
-        "eventualdemo": {}
+        "eventaulfinal": {}
+      },
+      "auth": {
+        "eventualfinal3724f223": {}
       }
     }
   }

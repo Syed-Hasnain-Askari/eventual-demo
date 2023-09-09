@@ -2,7 +2,7 @@ import { StyleSheet,View } from 'react-native'
 import { Modal,Portal,Text,TextInput,Button,IconButton } from 'react-native-paper'
 import React from 'react'
 export default function UserModal({handleSubmit,handleOnChnage,handleSubmitUpdate,hideModal,visible,field}) {
-  const containerStyle = {backgroundColor: 'white',height:400,margin:20,padding:20, borderRadius:20};
+  const containerStyle = {backgroundColor: 'white',height:320,margin:20,padding:20, borderRadius:20};
   console.log(field,"field")
   return (
     <View>
